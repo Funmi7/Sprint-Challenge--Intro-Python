@@ -14,6 +14,18 @@
 #
 # Note that the first line of the CSV is header that describes the fields--this
 # should not be loaded into a City object.
+
+import csv
+class City():
+  def __init__(self, name, lat, lon):
+    self.name = name
+    self.lat = lat
+    self.lon = lon
+
+  def __repr__(self):
+    return (f"{self.name}, {self.lat}, {self.lon}")
+
+
 cities = []
 
 def cityreader(cities=[]):
@@ -21,7 +33,13 @@ def cityreader(cities=[]):
   # For each city record, create a new City instance and add it to the 
   # `cities` list
     
-    return cities
+    with open("cities.csv") as cities_file:
+      cities_reader = csv.reader(cities_file, delimiter=',')
+      for row in cities_reader:
+        if row[0] != "city":
+          new_cities = City(row[0], float(row[3]), float(row[4]))
+          cities.append(new_cities)
+      return cities
 
 cityreader(cities)
 
@@ -60,12 +78,36 @@ for c in cities:
 
 # TODO Get latitude and longitude values from the user
 
+first_coord = input("Please enter lat1, lon1: ")
+second_coord = input("Please enter lat2, lon2: ")
+
+splitted1 = first_coord.split(", ")
+lat1 = float(splitted1[0])
+lon1 = float(splitted1[1])
+splitted2 = second_coord.split(", ")
+lat2 = float(splitted2[0])
+lon2 = float(splitted2[1])
+
 def cityreader_stretch(lat1, lon1, lat2, lon2, cities=[]):
   # within will hold the cities that fall within the specified region
+  min_lat = min([lat1, lat2])
+  min_lon = min([lon1, lon2])
+  max_lat = max([lat1, lat2])
+  max_lon = max([lon1, lon2])
+
+  cities = cityreader()
   within = []
 
   # TODO Ensure that the lat and lon valuse are all floats
   # Go through each city and check to see if it falls within 
   # the specified coordinates.
 
+  for city in cities:
+    lat = float(city.lat)
+    lon = float(city.lon)
+
+    if lat >= min_lat and lat <= max_lat and lon >= min_lon and lon <= max_lon:
+      within.append(city)
+
   return within
+print(cityreader_stretch(lat1, lon1, lat2, lon2))
